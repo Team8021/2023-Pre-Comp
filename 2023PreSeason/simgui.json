@@ -1,0 +1,20 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/ExampleSubsystem": "Subsystem",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler"
+    }
+  },
+  "NetworkTables": {
+    "Shuffleboard": {
+      "New Tab": {
+        "open": true
+      },
+      "open": true
+    },
+    "SmartDashboard": {
+      "open": true
+    }
+  }
+}
