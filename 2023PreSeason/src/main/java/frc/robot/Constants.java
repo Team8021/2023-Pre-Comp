@@ -10,19 +10,10 @@ public final class Constants {
     
     private static ShuffleboardTab tab = Shuffleboard.getTab("Constants");
     
-    
+    // Shuffleboard variables here
     public static final NetworkTableEntry speedLimit = tab.add("Speed Limit", 1).getEntry();
 
-    // public static double speedLimit = tab.add("Speed Limit", 8).getEntry().getDouble(0);
-    
-    
 
-
-
-    
-
-    // Runtime variables Down here
-    
-
-
+    // True constants here
+    public static final int RIGHT_MOTOR_ID = 5;
 }
