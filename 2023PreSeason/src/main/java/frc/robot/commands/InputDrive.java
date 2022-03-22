@@ -27,7 +27,7 @@ public class InputDrive extends CommandBase {
 
   @Override
   public void execute() {
-    m_subsystem.setArcadeDrive(m_speedFunction.get() * Constants.Speed_Limit.getDouble(.5), m_turnFunction.get() * Constants.Speed_Limit.getDouble(.5), true);
+    m_subsystem.setArcadeDrive(-m_speedFunction.get() * Constants.Speed_Limit.getDouble(.5), -m_turnFunction.get() * Constants.Speed_Limit.getDouble(.5), false);
   }
 
   @Override
