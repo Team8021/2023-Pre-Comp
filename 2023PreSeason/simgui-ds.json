@@ -4,7 +4,7 @@
       "visible": false
     }
   },
-  "Joysticks": {
+  "System Joysticks": {
     "window": {
       "visible": false
     }
@@ -97,6 +97,11 @@
       "axisCount": 0,
       "buttonCount": 0,
       "povCount": 0
+    }
+  ],
+  "robotJoysticks": [
+    {
+      "guid": "050000007e0500003003000001000000"
     }
   ]
 }
