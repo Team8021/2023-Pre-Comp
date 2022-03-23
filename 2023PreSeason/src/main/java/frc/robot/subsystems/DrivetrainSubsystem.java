@@ -159,7 +159,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   //#endregion
   @Override
   public void periodic() {
-    m_pose = m_odometry.update(getHeading(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
+    m_pose = m_odometry.update(getHeading(), m_leftAltEncoder.getDistance(), m_rightAltEncoder.getDistance());
     m_field.setRobotPose(m_odometry.getPoseMeters());
   }
   public void SimulationPeriodic(){
