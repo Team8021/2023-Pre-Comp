@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -11,9 +12,18 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.simulation.ADIS16448_IMUSim;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -32,7 +42,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   
   private DifferentialDrive m_differentialDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
   
-  // Kinematics 
+  // Kinematics determine the voltage required to move the robot and stuff like that
   private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(28));
   // Odometry determines where on the field you are
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(getHeading());
@@ -45,14 +55,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
   PIDController m_leftPIDController = new PIDController(2.95, 0, 0);
   PIDController m_rightPIDController = new PIDController(2.95, 0, 0);
   
-
-
-
   public DrivetrainSubsystem() {
     // The conversion factor is in meters
     m_leftEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_rightEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_gyro.reset();
+
+    SmartDashboard.putData("Field", m_field);
   }
 
   //#region Setters
@@ -84,6 +93,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
   //#endregion
   //#region Getters
+
   public double getLeftEncoderVelocity() {
     return m_leftEncoder.getVelocity();
   }
@@ -121,9 +131,43 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return m_rightPIDController;
   }
 
+  // Simulation Variables
+  // Simulated Hardware
+  private EncoderSim m_leftEncoderSim = new EncoderSim((Encoder)m_rightEncoder);
+  private EncoderSim m_rightEncoderSim = new EncoderSim((Encoder)m_rightEncoder);
+  private ADIS16448_IMUSim m_gyroSim = new ADIS16448_IMUSim(m_gyro);
+
+  // Simulated Drivetrain
+  DifferentialDrivetrainSim m_drivetrainSim = new DifferentialDrivetrainSim(  
+    LinearSystemId.identifyDrivetrainSystem(0.3, 1.96, 0.06, .06),
+    DCMotor.getNEO(2),       // 2 NEO motors on each side of the drivetrain.
+    7.29,                    // 7.29:1 gearing reduction.
+    7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
+    Units.inchesToMeters(3), // The robot uses 3" radius wheels.
+    // The standard deviations for measurement noise:
+    // x and y:          0.001 m
+    // heading:          0.001 rad
+    // l and r velocity: 0.1   m/s
+    // l and r position: 0.005 m
+    VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
+    // Simulated field
+    private Field2d m_field = new Field2d();
+
   //#endregion
   @Override
   public void periodic() {
     m_pose = m_odometry.update(getHeading(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
+    m_field.setRobotPose(m_odometry.getPoseMeters());
+  }
+  public void SimulationPeriodic(){
+    m_drivetrainSim.setInputs(m_leftMotor.get() * RobotController.getInputVoltage(),
+    m_rightMotor.get() * RobotController.getInputVoltage());
+    m_drivetrainSim.update(.02);
+    // updating the simulated hardware
+    m_leftEncoderSim.setDistance(m_drivetrainSim.getLeftPositionMeters());
+    m_leftEncoderSim.setRate(m_drivetrainSim.getLeftVelocityMetersPerSecond());
+    m_rightEncoderSim.setDistance(m_drivetrainSim.getRightPositionMeters());
+    m_rightEncoderSim.setRate(m_drivetrainSim.getRightVelocityMetersPerSecond());
+    m_gyroSim.setGyroRateX(-m_drivetrainSim.getHeading().getDegrees());
   }
 }
