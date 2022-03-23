@@ -141,19 +141,33 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private ADIS16448_IMUSim m_gyroSim = new ADIS16448_IMUSim(m_gyro);
 
   // Simulated Drivetrain
-  DifferentialDrivetrainSim m_drivetrainSim = new DifferentialDrivetrainSim(  
-    LinearSystemId.identifyDrivetrainSystem(0.3, 1.96, 0.06, .06),
-    DCMotor.getNEO(2),       // 2 NEO motors on each side of the drivetrain.
-    7.29,                    // 7.29:1 gearing reduction.
-    7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
-    Units.inchesToMeters(3), // The robot uses 3" radius wheels.
-    // The standard deviations for measurement noise:
-    // x and y:          0.001 m
-    // heading:          0.001 rad
-    // l and r velocity: 0.1   m/s
-    // l and r position: 0.005 m
-    VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
-    // Simulated field
+  DifferentialDrivetrainSim m_drivetrainSim = new DifferentialDrivetrainSim(
+  DCMotor.getNEO(2),       // 2 NEO motors on each side of the drivetrain.
+  7.29,                    // 7.29:1 gearing reduction.
+  7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
+  60.0,                    // The mass of the robot is 60 kg.
+  Units.inchesToMeters(3), // The robot uses 3" radius wheels.
+  0.7112,                  // The track width is 0.7112 meters.
+
+  // The standard deviations for measurement noise:
+  // x and y:          0.001 m
+  // heading:          0.001 rad
+  // l and r velocity: 0.1   m/s
+  // l and r position: 0.005 m
+  VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
+  // DifferentialDrivetrainSim m_drivetrainSim = new DifferentialDrivetrainSim(  
+  //   LinearSystemId.identifyDrivetrainSystem(0.3, 1.96, 0.06, .06),
+  //   DCMotor.getNEO(2),       // 2 NEO motors on each side of the drivetrain.
+  //   7.29,                    // 7.29:1 gearing reduction.
+  //   7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
+  //   Units.inchesToMeters(3), // The robot uses 3" radius wheels.
+  //   // The standard deviations for measurement noise:
+  //   // x and y:          0.001 m
+  //   // heading:          0.001 rad
+  //   // l and r velocity: 0.1   m/s
+  //   // l and r position: 0.005 m
+  //   VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
+  //   // Simulated field
     private Field2d m_field = new Field2d();
 
   //#endregion
@@ -164,7 +178,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
   public void SimulationPeriodic(){
     m_drivetrainSim.setInputs(m_leftMotor.get() * RobotController.getInputVoltage(),
-    m_rightMotor.get() * RobotController.getInputVoltage());
+                              m_rightMotor.get() * RobotController.getInputVoltage());
     m_drivetrainSim.update(.02);
     // updating the simulated hardware
     m_leftEncoderSim.setDistance(m_drivetrainSim.getLeftPositionMeters());
