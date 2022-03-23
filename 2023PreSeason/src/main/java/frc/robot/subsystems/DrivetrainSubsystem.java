@@ -37,7 +37,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private CANSparkMax m_leftMotor = new CANSparkMax(Constants.MOTOR_LEFT_ID, MotorType.kBrushless);
   private CANSparkMax m_rightMotor = new CANSparkMax(Constants.MOTOR_RIGHT_ID, MotorType.kBrushless);
   private RelativeEncoder m_leftEncoder = m_leftMotor.getEncoder();
+  private Encoder m_leftAltEncoder = new Encoder(0, 1);
   private RelativeEncoder m_rightEncoder = m_rightMotor.getEncoder();
+  private Encoder m_rightAltEncoder = new Encoder(2, 3);
   private ADIS16448_IMU m_gyro = new ADIS16448_IMU();
   
   private DifferentialDrive m_differentialDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
@@ -133,8 +135,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   // Simulation Variables
   // Simulated Hardware
-  private EncoderSim m_leftEncoderSim = new EncoderSim((Encoder)m_rightEncoder);
-  private EncoderSim m_rightEncoderSim = new EncoderSim((Encoder)m_rightEncoder);
+  
+  private EncoderSim m_leftEncoderSim = new EncoderSim(m_leftAltEncoder);
+  private EncoderSim m_rightEncoderSim = new EncoderSim(m_rightAltEncoder);
   private ADIS16448_IMUSim m_gyroSim = new ADIS16448_IMUSim(m_gyro);
 
   // Simulated Drivetrain
