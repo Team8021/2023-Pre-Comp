@@ -66,6 +66,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_leftEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_rightEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_gyro.reset();
+    m_odometry.resetPosition(new Pose2d(5.0, 5.0, getHeading()), getHeading());
 
     SmartDashboard.putData("Field", m_field);
   }
@@ -88,7 +89,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
   public void setOutputVolts(double leftVolts, double rightVolts){
     m_leftMotor.set(leftVolts/12);
-    m_rightMotor.set(leftVolts/12);
+    m_rightMotor.set(rightVolts/12);
   }
   public void resetDrive()
   {
@@ -96,6 +97,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_leftEncoder.setPosition(0);
     m_rightEncoder.setPosition(0);
     m_odometry.resetPosition(new Pose2d(), getHeading());
+  }
+  public void resetOdometry(Pose2d pose){
+    m_odometry.resetPosition(pose, pose.getRotation());
   }
   //#endregion
   //#region Getters
@@ -118,19 +122,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public Rotation2d getHeading(){
     return Rotation2d.fromDegrees(-m_gyro.getAngle());
   }
-  // public DifferentialDriveWheelSpeeds getSpeedsInMetersPerSecond(){
-  //   return new DifferentialDriveWheelSpeeds(
-  //   m_leftEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60,
-  //   m_rightEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60
-  //   );
-  // }
+  public Pose2d getPose(){
+    return m_pose;
+  }
+  public DifferentialDriveWheelSpeeds getSpeedsInMetersPerSecond(){
+    return new DifferentialDriveWheelSpeeds(
+    m_leftEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60,
+    m_rightEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60
+    );
+  }
   public SimpleMotorFeedforward getFeedForward(){
     return m_feedforward;
   }
   public DifferentialDriveKinematics getKinematics(){
     return m_kinematics;
   }
-  public PIDController getLeftPidController(){
+  public PIDController getLeftPIDController(){
     return m_leftPIDController;
   }
   public PIDController getRightPIDController() {
