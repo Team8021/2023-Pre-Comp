@@ -22,7 +22,6 @@ public final class Constants {
         .withProperties(Map.of("min", 0, "max", 1))
         .getEntry();
 
-
     // True constants here
     public static final int MOTOR_LEFT_ID = 0;
     public static final int MOTOR_RIGHT_ID = 1;

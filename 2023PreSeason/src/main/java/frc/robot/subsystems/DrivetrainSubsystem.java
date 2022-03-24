@@ -52,7 +52,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   Pose2d m_pose = new Pose2d();
 
   // Feedforward/feedback controllers. THESE ARE NOT COMPLETED THE CONSTANTS ARE NOT SPECIFIC TO OUR ROBOT PLEASE CHANGE FOR THE LOVE OF GOD
-  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(0.3, 1.96, 0.06);
+  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(0.22, 1.96, 0.2);
 
   PIDController m_leftPIDController = new PIDController(2.95, 0, 0);
   PIDController m_rightPIDController = new PIDController(2.95, 0, 0);
@@ -60,8 +60,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public DrivetrainSubsystem() {
     // The conversion factor is in meters
 
-    m_leftAltEncoder.setDistancePerPulse(kGearRatio * 2 * Math.PI / 42);
-    m_rightAltEncoder.setDistancePerPulse(kGearRatio * 2 * Math.PI / 42);
+    m_leftAltEncoder.setDistancePerPulse(4./256.);
+    m_rightAltEncoder.setDistancePerPulse(4./256.);
 
     m_leftEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_rightEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
@@ -147,7 +147,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // Simulated Drivetrain
 
   DifferentialDrivetrainSim m_drivetrainSim = new DifferentialDrivetrainSim(  
-    LinearSystemId.identifyDrivetrainSystem(0.3, 1.96, 0.06, .06),
+    LinearSystemId.identifyDrivetrainSystem(1.98, .2, 1.5, .3),
     DCMotor.getNEO(2),       // 2 NEO motors on each side of the drivetrain.
     7.29,                    // 7.29:1 gearing reduction.
     7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
