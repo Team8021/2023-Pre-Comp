@@ -1,7 +1,7 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "SPARK MAX [1]": {
+      "ADIS16448[4]": {
         "header": {
           "open": true
         }

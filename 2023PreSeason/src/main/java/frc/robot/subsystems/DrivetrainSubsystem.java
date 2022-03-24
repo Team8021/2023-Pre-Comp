@@ -60,8 +60,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public DrivetrainSubsystem() {
     // The conversion factor is in meters
 
-    m_leftAltEncoder.setDistancePerPulse(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
-    m_rightAltEncoder.setDistancePerPulse(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
+    m_leftAltEncoder.setDistancePerPulse(kGearRatio * 2 * Math.PI / 42);
+    m_rightAltEncoder.setDistancePerPulse(kGearRatio * 2 * Math.PI / 42);
 
     m_leftEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_rightEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
@@ -170,12 +170,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void simulationPeriodic(){
     m_drivetrainSim.setInputs(m_leftMotor.get() * RobotController.getInputVoltage(),
                               m_rightMotor.get() * RobotController.getInputVoltage());
-    m_drivetrainSim.update(.02);
+    m_drivetrainSim.update(0.02);
     // updating the simulated hardware
     m_leftEncoderSim.setDistance(m_drivetrainSim.getLeftPositionMeters());
     m_leftEncoderSim.setRate(m_drivetrainSim.getLeftVelocityMetersPerSecond());
     m_rightEncoderSim.setDistance(m_drivetrainSim.getRightPositionMeters());
     m_rightEncoderSim.setRate(m_drivetrainSim.getRightVelocityMetersPerSecond());
-    m_gyroSim.setGyroRateX(-m_drivetrainSim.getHeading().getDegrees());
+    m_gyroSim.setGyroAngleZ(-m_drivetrainSim.getHeading().getDegrees());
   }
 }
