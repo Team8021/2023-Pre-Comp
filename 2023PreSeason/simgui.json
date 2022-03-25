@@ -11,6 +11,35 @@
     },
     "windows": {
       "/SmartDashboard/Field": {
+        "Robot": {
+          "arrowColor": [
+            255.0,
+            232.50001525878906,
+            0.0,
+            255.0
+          ],
+          "arrowSize": 76,
+          "arrowWeight": 1.0,
+          "color": [
+            0.0,
+            0.0,
+            255.0,
+            255.0
+          ]
+        },
+        "image": "/home/matthew/Documents/2023-Pre-Comp/2023PreSeason/FieldData/2022-field.png",
+        "traj": {
+          "arrows": false,
+          "color": [
+            0.936274528503418,
+            0.8767449855804443,
+            0.2616061568260193,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Line",
+          "weight": 1.0
+        },
         "window": {
           "visible": true
         }
