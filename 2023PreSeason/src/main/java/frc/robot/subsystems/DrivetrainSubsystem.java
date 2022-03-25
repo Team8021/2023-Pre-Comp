@@ -45,14 +45,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private DifferentialDrive m_differentialDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
   
   // Kinematics determine the voltage required to move the robot and stuff like that
-  private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(28));
+  private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(.7112);
   // Odometry determines where on the field you are
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(getHeading());
   // Pose is where you are on the field
   Pose2d m_pose = new Pose2d();
 
   // Feedforward/feedback controllers. THESE ARE NOT COMPLETED THE CONSTANTS ARE NOT SPECIFIC TO OUR ROBOT PLEASE CHANGE FOR THE LOVE OF GOD
-  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(.929, 6.33);
+  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(.22, 20, .3);
 
   PIDController m_leftPIDController = new PIDController(.4, 0, 0);
   PIDController m_rightPIDController = new PIDController(.4, 0, 0);
@@ -112,7 +112,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     final double rightFeedForward = m_feedforward.calculate(speeds.rightMetersPerSecond);
 
     final double leftOutput = m_leftPIDController.calculate(m_leftAltEncoder.getRate(), speeds.leftMetersPerSecond);
-    final double rightOutput = m_leftPIDController.calculate(m_leftAltEncoder.getRate(), speeds.rightMetersPerSecond);
+    final double rightOutput = m_rightPIDController.calculate(m_rightAltEncoder.getRate(), speeds.rightMetersPerSecond);
 
     m_leftMotor.set((leftOutput + leftFeedForward)/12);
     m_rightMotor.set((rightOutput + rightFeedForward)/12);
