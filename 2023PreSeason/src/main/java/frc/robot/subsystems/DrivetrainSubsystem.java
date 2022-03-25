@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -52,23 +53,26 @@ public class DrivetrainSubsystem extends SubsystemBase {
   Pose2d m_pose = new Pose2d();
 
   // Feedforward/feedback controllers. THESE ARE NOT COMPLETED THE CONSTANTS ARE NOT SPECIFIC TO OUR ROBOT PLEASE CHANGE FOR THE LOVE OF GOD
-  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(0.22, 1.96, 0.2);
+  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
 
-  PIDController m_leftPIDController = new PIDController(2.95, 0, 0);
-  PIDController m_rightPIDController = new PIDController(2.95, 0, 0);
+  PIDController m_leftPIDController = new PIDController(.1, 0, 0);
+  PIDController m_rightPIDController = new PIDController(.1, 0, 0);
   
   public DrivetrainSubsystem() {
     // The conversion factor is in meters
 
-    m_leftAltEncoder.setDistancePerPulse(4./256.);
-    m_rightAltEncoder.setDistancePerPulse(4./256.);
+    m_leftAltEncoder.setDistancePerPulse(2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 42);
+    m_rightAltEncoder.setDistancePerPulse(2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 42);
 
     m_leftEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_rightEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_gyro.reset();
-    m_odometry.resetPosition(new Pose2d(5.0, 5.0, getHeading()), getHeading());
+    m_odometry.resetPosition(new Pose2d(), getHeading());
 
-    SmartDashboard.putData("Field", m_field);
+    m_leftAltEncoder.reset();
+    m_rightAltEncoder.reset();
+
+    SmartDashboard.putData("Field", Constants.field);
   }
 
   //#region Setters
@@ -101,6 +105,29 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void resetOdometry(Pose2d pose){
     m_odometry.resetPosition(pose, pose.getRotation());
   }
+  public void feedDifferentialDrive(){
+    m_differentialDrive.feed();
+  }
+  public void setSpeeds(DifferentialDriveWheelSpeeds speeds){
+    final double leftFeedForward = m_feedforward.calculate(speeds.leftMetersPerSecond);
+    final double rightFeedForward = m_feedforward.calculate(speeds.rightMetersPerSecond);
+
+    final double leftOutput = m_leftPIDController.calculate(m_leftAltEncoder.getRate(), speeds.leftMetersPerSecond);
+    final double rightOutput = m_leftPIDController.calculate(m_leftAltEncoder.getRate(), speeds.rightMetersPerSecond);
+
+    m_leftMotor.set((leftOutput + leftFeedForward)/12);
+    m_rightMotor.set((rightOutput + rightFeedForward)/12);
+  }
+    /**
+   * Drives the robot with the given linear velocity and angular velocity.
+   *
+   * @param xSpeed Linear velocity in m/s.
+   * @param rot Angular velocity in rad/s.
+   */
+  public void drive(double xSpeed, double rot){
+    var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, rot));
+    setSpeeds(wheelSpeeds);
+  }
   //#endregion
   //#region Getters
 
@@ -125,12 +152,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public Pose2d getPose(){
     return m_pose;
   }
-  public DifferentialDriveWheelSpeeds getSpeedsInMetersPerSecond(){
-    return new DifferentialDriveWheelSpeeds(
-    m_leftEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60,
-    m_rightEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60
-    );
-  }
+  // public DifferentialDriveWheelSpeeds getSpeedsInMetersPerSecond(){
+  //   return new DifferentialDriveWheelSpeeds(
+  //   m_leftEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60,
+  //   m_rightEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60
+  //   );
+  // }
   public SimpleMotorFeedforward getFeedForward(){
     return m_feedforward;
   }
@@ -143,7 +170,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public PIDController getRightPIDController() {
     return m_rightPIDController;
   }
-
+  //#endregion
+  
   // Simulation Variables
   // Simulated Hardware
   
@@ -154,8 +182,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // Simulated Drivetrain
 
   DifferentialDrivetrainSim m_drivetrainSim = new DifferentialDrivetrainSim(  
-    LinearSystemId.identifyDrivetrainSystem(1.98, .2, 1.5, .3),
-    DCMotor.getNEO(2),       // 2 NEO motors on each side of the drivetrain.
+    LinearSystemId.identifyDrivetrainSystem(Constants.KvLinear, Constants.KaLinear, Constants.KvAngular, Constants.KaAngular),
+    DCMotor.getNEO(1),       // 1 NEO motors on each side of the drivetrain.
     7.29,                    // 7.29:1 gearing reduction.
     7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
     Units.inchesToMeters(3), // The robot uses 3" radius wheels.
@@ -166,13 +194,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // l and r position: 0.005 m
     VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
     // Simulated field
-    private Field2d m_field = new Field2d();
 
-  //#endregion
   @Override
   public void periodic() {
     m_pose = m_odometry.update(getHeading(), m_leftAltEncoder.getDistance(), m_rightAltEncoder.getDistance());
-    m_field.setRobotPose(m_odometry.getPoseMeters());
+    Constants.field.setRobotPose(m_odometry.getPoseMeters());
   }
   public void simulationPeriodic(){
     m_drivetrainSim.setInputs(m_leftMotor.get() * RobotController.getInputVoltage(),

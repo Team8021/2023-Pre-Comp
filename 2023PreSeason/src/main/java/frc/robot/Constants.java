@@ -5,6 +5,7 @@ import java.util.Map;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public final class Constants {    
     
@@ -25,6 +26,12 @@ public final class Constants {
     // True constants here
     public static final int MOTOR_LEFT_ID = 0;
     public static final int MOTOR_RIGHT_ID = 1;
+
+    public static final double KvLinear = 3;
+    public static final double KaLinear = 0.2;
+    public static final double KvAngular = .7;
+    public static final double KaAngular = .2;
+    public static Field2d field = new Field2d();
 
 
 
