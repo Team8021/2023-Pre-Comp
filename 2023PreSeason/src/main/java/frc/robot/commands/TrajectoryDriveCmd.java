@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 import edu.wpi.first.math.controller.RamseteController;
@@ -15,7 +17,10 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -28,13 +33,10 @@ public class TrajectoryDriveCmd extends CommandBase {
 
   private boolean isFinished = false;
 
-  private TrajectoryConfig m_trajectoryConfig = new TrajectoryConfig(Units.feetToMeters(2), Units.feetToMeters(4));
-  private Trajectory m_trajectory = TrajectoryGenerator.generateTrajectory(
-    new Pose2d(0, 0, new Rotation2d(0)),
-    List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-    new Pose2d(3, 0, new Rotation2d(0)),
-    // Pass config
-    m_trajectoryConfig);
+  private TrajectoryConfig m_trajectoryConfig = new TrajectoryConfig(Units.feetToMeters(2), Units.feetToMeters(2));
+
+  String trajectoryJSON = "paths/Test.wpilib.json";
+  Trajectory m_trajectory = new Trajectory();
 
     private final RamseteController m_ramseteController = new RamseteController();
     private Timer m_timer;
@@ -48,6 +50,13 @@ public class TrajectoryDriveCmd extends CommandBase {
   
   @Override
   public void initialize() {
+
+    try{
+      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+      m_trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+    }catch (IOException ex){
+      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+    }
     Constants.field.getObject("traj").setTrajectory(m_trajectory);
     m_timer = new Timer();
     m_timer.start();
