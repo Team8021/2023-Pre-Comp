@@ -52,10 +52,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   Pose2d m_pose = new Pose2d();
 
   // Feedforward/feedback controllers. THESE ARE NOT COMPLETED THE CONSTANTS ARE NOT SPECIFIC TO OUR ROBOT PLEASE CHANGE FOR THE LOVE OF GOD
-  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(.22, 20, .3);
+  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(.22, 8);
 
-  PIDController m_leftPIDController = new PIDController(.4, 0, 0);
-  PIDController m_rightPIDController = new PIDController(.4, 0, 0);
+  PIDController m_leftPIDController = new PIDController(.2, 0, 0);
+  PIDController m_rightPIDController = new PIDController(.2, 0, 0);
   
   public DrivetrainSubsystem() {
     // The conversion factor is in meters
@@ -75,6 +75,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   //#region Setters
+  public void calibrateGyro(){
+    m_gyro.calibrate();
+  }
   public void invertRightMotor() {
     m_rightMotor.setInverted(true);
   }

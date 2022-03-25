@@ -6,23 +6,16 @@ package frc.robot.commands;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
 
 import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -33,7 +26,7 @@ public class TrajectoryDriveCmd extends CommandBase {
 
   private boolean isFinished = false;
 
-  private TrajectoryConfig m_trajectoryConfig = new TrajectoryConfig(Units.feetToMeters(2), Units.feetToMeters(2));
+  // private TrajectoryConfig m_trajectoryConfig = new TrajectoryConfig(Units.feetToMeters(2), Units.feetToMeters(2));
 
   String trajectoryJSON = "paths/Test.wpilib.json";
   Trajectory m_trajectory = new Trajectory();
@@ -50,7 +43,7 @@ public class TrajectoryDriveCmd extends CommandBase {
   
   @Override
   public void initialize() {
-
+    m_subsystem.calibrateGyro();
     try{
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
       m_trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
@@ -60,7 +53,7 @@ public class TrajectoryDriveCmd extends CommandBase {
     Constants.field.getObject("traj").setTrajectory(m_trajectory);
     m_timer = new Timer();
     m_timer.start();
-    m_trajectoryConfig.setKinematics(m_subsystem.getKinematics());
+    // m_trajectoryConfig.setKinematics(m_subsystem.getKinematics());
     m_subsystem.resetOdometry(m_trajectory.getInitialPose());
   }
 
