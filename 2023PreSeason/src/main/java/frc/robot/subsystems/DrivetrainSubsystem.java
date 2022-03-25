@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.ADIS16448_IMUSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -152,12 +151,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public Pose2d getPose(){
     return m_pose;
   }
-  // public DifferentialDriveWheelSpeeds getSpeedsInMetersPerSecond(){
-  //   return new DifferentialDriveWheelSpeeds(
-  //   m_leftEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60,
-  //   m_rightEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60
-  //   );
-  // }
+  public DifferentialDriveWheelSpeeds getSpeedsInMetersPerSecond(){
+    return new DifferentialDriveWheelSpeeds(
+    m_leftEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60,
+    m_rightEncoder.getVelocity() / kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 60
+    );
+  }
   public SimpleMotorFeedforward getFeedForward(){
     return m_feedforward;
   }

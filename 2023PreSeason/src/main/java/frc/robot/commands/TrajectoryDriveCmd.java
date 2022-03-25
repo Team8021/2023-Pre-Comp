@@ -16,9 +16,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
@@ -26,7 +24,7 @@ public class TrajectoryDriveCmd extends CommandBase {
 
   private final DrivetrainSubsystem m_subsystem;
 
-  private TrajectoryConfig m_trajectoryConfig = new TrajectoryConfig(Units.feetToMeters(8), Units.feetToMeters(4));
+  private TrajectoryConfig m_trajectoryConfig = new TrajectoryConfig(Units.feetToMeters(4), Units.feetToMeters(2));
   private Trajectory m_trajectory = TrajectoryGenerator.generateTrajectory(
     new Pose2d(0, 0, new Rotation2d(0)),
     List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
@@ -49,12 +47,8 @@ public class TrajectoryDriveCmd extends CommandBase {
     Constants.field.getObject("traj").setTrajectory(m_trajectory);
     m_timer = new Timer();
     m_timer.start();
-    trajectoryDrive();
-  }
-
-  private void trajectoryDrive(){
     m_trajectoryConfig.setKinematics(m_subsystem.getKinematics());
-
+    m_subsystem.resetOdometry(m_trajectory.getInitialPose());
   }
 
   @Override
@@ -66,7 +60,6 @@ public class TrajectoryDriveCmd extends CommandBase {
       
       var refChassisSpeeds = m_ramseteController.calculate(m_subsystem.getPose(), desiredPose);
 
-      m_subsystem.resetOdometry(m_trajectory.getInitialPose());
 
       m_subsystem.drive(refChassisSpeeds.vxMetersPerSecond, refChassisSpeeds.omegaRadiansPerSecond);
     }else{
