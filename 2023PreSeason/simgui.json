@@ -1,34 +1,8 @@
 {
-  "HALProvider": {
-    "Encoders": {
-      "0": {
-        "header": {
-          "open": true
-        }
-      },
-      "1": {
-        "header": {
-          "open": true
-        }
-      },
-      "window": {
-        "visible": true
-      }
-    },
-    "Other Devices": {
-      "ADIS16448[4]": {
-        "header": {
-          "open": true
-        }
-      }
-    }
-  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
-      "/LiveWindow/ExampleSubsystem": "Subsystem",
-      "/LiveWindow/Ungrouped/AnalogGyro[1]": "Gyro",
       "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
@@ -46,17 +20,16 @@
   "NetworkTables": {
     "Shuffleboard": {
       "Constants": {
-        "open": true
+        "open": false
       },
       "New Tab": {
-        "open": true
+        "open": false
       }
     },
     "SmartDashboard": {
       "Field": {
-        "open": true
-      },
-      "open": true
+        "open": false
+      }
     }
   },
   "NetworkTables View": {

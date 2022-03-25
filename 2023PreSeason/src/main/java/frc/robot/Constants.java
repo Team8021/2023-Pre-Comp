@@ -27,10 +27,10 @@ public final class Constants {
     public static final int MOTOR_LEFT_ID = 0;
     public static final int MOTOR_RIGHT_ID = 1;
 
-    public static final double KvLinear = 3;
+    public static final double KvLinear = 1.98;
     public static final double KaLinear = 0.2;
-    public static final double KvAngular = .7;
-    public static final double KaAngular = .2;
+    public static final double KvAngular = 1;
+    public static final double KaAngular = .3;
     public static Field2d field = new Field2d();
 
 

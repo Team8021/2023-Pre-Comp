@@ -52,10 +52,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   Pose2d m_pose = new Pose2d();
 
   // Feedforward/feedback controllers. THESE ARE NOT COMPLETED THE CONSTANTS ARE NOT SPECIFIC TO OUR ROBOT PLEASE CHANGE FOR THE LOVE OF GOD
-  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
+  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(.929, 6.33);
 
-  PIDController m_leftPIDController = new PIDController(.1, 0, 0);
-  PIDController m_rightPIDController = new PIDController(.1, 0, 0);
+  PIDController m_leftPIDController = new PIDController(.4, 0, 0);
+  PIDController m_rightPIDController = new PIDController(.4, 0, 0);
   
   public DrivetrainSubsystem() {
     // The conversion factor is in meters
@@ -99,10 +99,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_gyro.reset();
     m_leftEncoder.setPosition(0);
     m_rightEncoder.setPosition(0);
-    m_odometry.resetPosition(new Pose2d(), getHeading());
+    // m_odometry.resetPosition(new Pose2d(), getHeading());
   }
   public void resetOdometry(Pose2d pose){
-    m_odometry.resetPosition(pose, pose.getRotation());
+    m_odometry.resetPosition(pose, getHeading());
   }
   public void feedDifferentialDrive(){
     m_differentialDrive.feed();
@@ -197,7 +197,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     m_pose = m_odometry.update(getHeading(), m_leftAltEncoder.getDistance(), m_rightAltEncoder.getDistance());
-    Constants.field.setRobotPose(m_odometry.getPoseMeters());
+    Constants.field.setRobotPose(m_pose);
   }
   public void simulationPeriodic(){
     m_drivetrainSim.setInputs(m_leftMotor.get() * RobotController.getInputVoltage(),

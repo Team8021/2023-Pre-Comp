@@ -10,6 +10,8 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -24,7 +26,9 @@ public class TrajectoryDriveCmd extends CommandBase {
 
   private final DrivetrainSubsystem m_subsystem;
 
-  private TrajectoryConfig m_trajectoryConfig = new TrajectoryConfig(Units.feetToMeters(4), Units.feetToMeters(2));
+  private boolean isFinished = false;
+
+  private TrajectoryConfig m_trajectoryConfig = new TrajectoryConfig(Units.feetToMeters(2), Units.feetToMeters(4));
   private Trajectory m_trajectory = TrajectoryGenerator.generateTrajectory(
     new Pose2d(0, 0, new Rotation2d(0)),
     List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
@@ -56,24 +60,25 @@ public class TrajectoryDriveCmd extends CommandBase {
     m_subsystem.feedDifferentialDrive();
 
     if(m_timer.get() < m_trajectory.getTotalTimeSeconds()){
-      var desiredPose = m_trajectory.sample(m_timer.get());
+      Trajectory.State desiredPose = m_trajectory.sample(m_timer.get());
       
-      var refChassisSpeeds = m_ramseteController.calculate(m_subsystem.getPose(), desiredPose);
-
+      ChassisSpeeds refChassisSpeeds = m_ramseteController.calculate(m_subsystem.getPose(), desiredPose);
 
       m_subsystem.drive(refChassisSpeeds.vxMetersPerSecond, refChassisSpeeds.omegaRadiansPerSecond);
     }else{
-      m_subsystem.drive(0, 0);
+      m_subsystem.setTankDrive(0, 0);
+      isFinished = true;
     }
   }
 
   @Override
   public void end(boolean interrupted) {
+    m_subsystem.setTankDrive(0, 0);
     System.out.println("Trajectory Drive Cmd Stopped!");
   }
 
   @Override
   public boolean isFinished() {
-    return false;
+    return isFinished;
   }
 }
