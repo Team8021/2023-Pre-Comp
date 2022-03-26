@@ -6,6 +6,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public final class Constants {    
     
@@ -18,18 +20,21 @@ public final class Constants {
     */
 
      // Shuffleboard variables here
-    public static final NetworkTableEntry Speed_Limit = tab.add("Speed Limit", 1)
+    public static final NetworkTableEntry Speed_Limit = tab.add("Speed Limit", .5)
         .withWidget("Number Slider")
         .withProperties(Map.of("min", 0, "max", 1))
         .getEntry();
 
+
+    public static final SendableChooser<SequentialCommandGroup> AutoRoutine = new SendableChooser<>();
+    
     // True constants here
     public static final int MOTOR_LEFT_ID = 0;
     public static final int MOTOR_RIGHT_ID = 1;
 
     public static final double KvLinear = 3;
     public static final double KaLinear = 0.2;
-    public static final double KvAngular = 1;
+    public static final double KvAngular = .7;
     public static final double KaAngular = .3;
     public static Field2d field = new Field2d();
 

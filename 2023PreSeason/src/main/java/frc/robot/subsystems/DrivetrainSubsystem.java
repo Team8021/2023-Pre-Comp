@@ -52,7 +52,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   Pose2d m_pose = new Pose2d();
 
   // Feedforward/feedback controllers. THESE ARE NOT COMPLETED THE CONSTANTS ARE NOT SPECIFIC TO OUR ROBOT PLEASE CHANGE FOR THE LOVE OF GOD
-  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(.22, 8);
+  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(.22, .5);
 
   PIDController m_leftPIDController = new PIDController(.2, 0, 0);
   PIDController m_rightPIDController = new PIDController(.2, 0, 0);
@@ -97,16 +97,21 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_leftMotor.set(leftVolts/12);
     m_rightMotor.set(rightVolts/12);
   }
+  public void resetAltEncoders(){
+    m_leftEncoderSim.setDistance(-m_leftAltEncoder.getDistance());
+    m_leftEncoderSim.setRate(0);
+    m_rightEncoderSim.setDistance(-m_rightAltEncoder.getDistance());
+    m_rightEncoderSim.setRate(0);
+  }
   public void resetDrive()
   {
     m_gyro.reset();
     m_leftEncoder.setPosition(0);
     m_rightEncoder.setPosition(0);
-    // m_odometry.resetPosition(new Pose2d(), getHeading());
   }
   public void resetOdometry(Pose2d pose){
     m_odometry.resetPosition(pose, getHeading());
-  }
+    }
   public void feedDifferentialDrive(){
     m_differentialDrive.feed();
   }
@@ -183,19 +188,32 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   // Simulated Drivetrain
 
-  DifferentialDrivetrainSim m_drivetrainSim = new DifferentialDrivetrainSim(  
-    LinearSystemId.identifyDrivetrainSystem(Constants.KvLinear, Constants.KaLinear, Constants.KvAngular, Constants.KaAngular),
-    DCMotor.getNEO(1),       // 1 NEO motors on each side of the drivetrain.
-    7.29,                    // 7.29:1 gearing reduction.
-    7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
-    Units.inchesToMeters(3), // The robot uses 3" radius wheels.
-    // The standard deviations for measurement noise:
-    // x and y:          0.001 m
-    // heading:          0.001 rad
-    // l and r velocity: 0.1   m/s
-    // l and r position: 0.005 m
-    VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
-    // Simulated field
+  // DifferentialDrivetrainSim m_drivetrainSim = new DifferentialDrivetrainSim(  
+  //   LinearSystemId.identifyDrivetrainSystem(Constants.KvLinear, Constants.KaLinear, Constants.KvAngular, Constants.KaAngular),
+  //   DCMotor.getNEO(1),       // 1 NEO motors on each side of the drivetrain.
+  //   7.29,                    // 7.29:1 gearing reduction.
+  //   7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
+  //   Units.inchesToMeters(3), // The robot uses 3" radius wheels.
+  //   // The standard deviations for measurement noise:
+  //   // x and y:          0.001 m
+  //   // heading:          0.001 rad
+  //   // l and r velocity: 0.1   m/s
+  //   // l and r position: 0.005 m
+  //   VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
+    DifferentialDrivetrainSim m_drivetrainSim = new DifferentialDrivetrainSim(
+      DCMotor.getNEO(1),       // 2 NEO motors on each side of the drivetrain.
+      7.29,                    // 7.29:1 gearing reduction.
+      7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
+      60.0,                    // The mass of the robot is 60 kg.
+      Units.inchesToMeters(3), // The robot uses 3" radius wheels.
+      0.7112,                  // The track width is 0.7112 meters.
+
+      // The standard deviations for measurement noise:
+      // x and y:          0.001 m
+      // heading:          0.001 rad
+      // l and r velocity: 0.1   m/s
+      // l and r position: 0.005 m
+      VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
 
   @Override
   public void periodic() {
