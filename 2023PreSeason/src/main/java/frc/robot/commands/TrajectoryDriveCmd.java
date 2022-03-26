@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import javax.naming.spi.ResolveResult;
-
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -37,10 +35,10 @@ public class TrajectoryDriveCmd extends CommandBase {
   
   @Override
   public void initialize() {
+    m_subsystem.calibrateGyro();
     if(m_resetPose){
       m_subsystem.resetOdometry(m_trajectory.getInitialPose());
     }
-    m_subsystem.calibrateGyro();
     Constants.field.getObject("traj").setTrajectory(m_trajectory);
     m_timer = new Timer();
     m_timer.start();
@@ -57,7 +55,6 @@ public class TrajectoryDriveCmd extends CommandBase {
 
       m_subsystem.drive(refChassisSpeeds.vxMetersPerSecond, refChassisSpeeds.omegaRadiansPerSecond);
     }else{
-      m_subsystem.setTankDrive(0, 0);
       isFinished = true;
     }
   }

@@ -20,7 +20,6 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class RobotContainer {
 
-
   XboxController m_driveController = new XboxController(0);
   private static ShuffleboardTab tab = Shuffleboard.getTab("Constants");
 
