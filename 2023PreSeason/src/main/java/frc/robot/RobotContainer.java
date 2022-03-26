@@ -29,11 +29,17 @@ public class RobotContainer {
   public RobotContainer() {
     tab.add(Constants.AutoRoutine);
     Constants.AutoRoutine.addOption("Auto Routine # 1",
-      new SequentialCommandGroup(
+    new SequentialCommandGroup(
       new TrajectoryDriveCmd(m_drivetrainSubsystem, GenerateTrajectoryFromJSON("paths/Ball1.wpilib.json"), true),
       new TrajectoryDriveCmd(m_drivetrainSubsystem, GenerateTrajectoryFromJSON("paths/Ball2.wpilib.json"), false)
       )
     );
+    Constants.AutoRoutine.addOption("Auto Routine # 2",
+    new SequentialCommandGroup(
+      new TrajectoryDriveCmd(m_drivetrainSubsystem, GenerateTrajectoryFromJSON("paths/Ball3.wpilib.json"), true),
+      new TrajectoryDriveCmd(m_drivetrainSubsystem, GenerateTrajectoryFromJSON("paths/Ball4.wpilib.json"), false)
+    )
+  );
 
     m_drivetrainSubsystem.setDefaultCommand(new InputDrive(m_drivetrainSubsystem, () -> m_driveController.getRawAxis(ControllerConstants.LEFT_Y), () -> m_driveController.getRawAxis(4)));
     configureButtonBindings();
