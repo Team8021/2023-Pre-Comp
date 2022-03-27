@@ -36,7 +36,8 @@ public class RobotContainer {
     Constants.AutoRoutine.addOption("Auto Routine # 2",
     new SequentialCommandGroup(
       new TrajectoryDriveCmd(m_drivetrainSubsystem, GenerateTrajectoryFromJSON("paths/Ball3.wpilib.json"), true),
-      new TrajectoryDriveCmd(m_drivetrainSubsystem, GenerateTrajectoryFromJSON("paths/Ball4.wpilib.json"), false)
+      new TrajectoryDriveCmd(m_drivetrainSubsystem, GenerateTrajectoryFromJSON("paths/Ball4.wpilib.json"), false),
+      new TrajectoryDriveCmd(m_drivetrainSubsystem, GenerateTrajectoryFromJSON("paths/Ball5.wpilib.json"), false)
     )
   );
 
