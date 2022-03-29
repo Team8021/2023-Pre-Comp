@@ -59,10 +59,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
   PIDController m_rightPIDController = new PIDController(.2, 0, 0);
   
   public DrivetrainSubsystem() {
+
+    m_leftAltEncoder.setDistancePerPulse(1./256);
+    m_rightAltEncoder.setDistancePerPulse(1./256);
     // The conversion factor is in meters
     m_gyro.setYawAxis(IMUAxis.kZ);
-    m_leftAltEncoder.setDistancePerPulse(2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 42);
-    m_rightAltEncoder.setDistancePerPulse(2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches) / 42);
 
     m_leftEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_rightEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
@@ -97,12 +98,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public void setOutputVolts(double leftVolts, double rightVolts){
     m_leftMotor.set(leftVolts/12);
     m_rightMotor.set(rightVolts/12);
-  }
-  public void resetAltEncoders(){
-    m_leftEncoderSim.setDistance(-m_leftAltEncoder.getDistance());
-    m_leftEncoderSim.setRate(0);
-    m_rightEncoderSim.setDistance(-m_rightAltEncoder.getDistance());
-    m_rightEncoderSim.setRate(0);
   }
   public void resetDrive()
   {
