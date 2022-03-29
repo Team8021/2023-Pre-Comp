@@ -30,7 +30,7 @@ import frc.robot.Constants;
 
 public class DrivetrainSubsystem extends SubsystemBase {
 
-  private final double kGearRatio = 7.29;
+  private final double kGearRatio = 10.7;
   private final double kWheelRadiusInches = 3.0;
 
   
@@ -60,8 +60,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   
   public DrivetrainSubsystem() {
 
-    m_leftAltEncoder.setDistancePerPulse(1./256);
-    m_rightAltEncoder.setDistancePerPulse(1./256);
+    m_leftAltEncoder.setDistancePerPulse((1./256) * kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
+    m_rightAltEncoder.setDistancePerPulse((1./256) * kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     // The conversion factor is in meters
     m_gyro.setYawAxis(IMUAxis.kZ);
 
