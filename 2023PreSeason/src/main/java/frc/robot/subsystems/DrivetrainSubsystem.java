@@ -52,11 +52,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // Pose is where you are on the field
   Pose2d m_pose = new Pose2d();
 
-  // Feedforward/feedback controllers. THESE ARE NOT COMPLETED THE CONSTANTS ARE NOT SPECIFIC TO OUR ROBOT PLEASE CHANGE FOR THE LOVE OF GOD
+  // Feedforward/feedback controllers.
   SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(.1191, 2.7995, .5474);
 
-  PIDController m_leftPIDController = new PIDController(.2, 0, 0);
-  PIDController m_rightPIDController = new PIDController(.2, 0, 0);
+  PIDController m_leftPIDController = new PIDController(.5, 0, 0);
+  PIDController m_rightPIDController = new PIDController(.5, 0, 0);
   
   public DrivetrainSubsystem() {
 
@@ -199,10 +199,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     DifferentialDrivetrainSim m_drivetrainSim = new DifferentialDrivetrainSim(
       DCMotor.getNEO(1),       // 2 NEO motors on each side of the drivetrain.
       7.29,                    // 7.29:1 gearing reduction.
-      10.75,                     // MOI of 7.5 kg m^2 (from CAD model).
+      7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
       60.0,                    // The mass of the robot is 60 kg.
       Units.inchesToMeters(3), // The robot uses 3" radius wheels.
-      0.5461,                  // The track width is 0.7112 meters.
+      0.5461,                  // The track width in meters
 
       // The standard deviations for measurement noise:
       // x and y:          0.001 m
