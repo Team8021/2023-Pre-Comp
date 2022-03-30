@@ -48,7 +48,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private DifferentialDrive m_differentialDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
   
   // Kinematics determine the voltage required to move the robot and stuff like that
-  private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(.7112);
+  private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(.5);
   // Odometry determines where on the field you are
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(getHeading());
   // Pose is where you are on the field
