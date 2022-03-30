@@ -29,8 +29,8 @@ public final class Constants {
     public static final SendableChooser<SequentialCommandGroup> AutoRoutine = new SendableChooser<>();
     
     // True constants here
-    public static final int MOTOR_LEFT_ID = 2;
-    public static final int MOTOR_RIGHT_ID = 3;
+    public static final int MOTOR_LEFT_ID = 1;
+    public static final int MOTOR_RIGHT_ID = 2;
 
     public static final double KvLinear = 3;
     public static final double KaLinear = 0.2;

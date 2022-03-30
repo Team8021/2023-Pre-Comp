@@ -18,6 +18,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.ADIS16448_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -198,7 +199,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   //   VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
     DifferentialDrivetrainSim m_drivetrainSim = new DifferentialDrivetrainSim(
       DCMotor.getNEO(1),       // 2 NEO motors on each side of the drivetrain.
-      7.29,                    // 7.29:1 gearing reduction.
+      10.7,                    // 7.29:1 gearing reduction.
       7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
       60.0,                    // The mass of the robot is 60 kg.
       Units.inchesToMeters(3), // The robot uses 3" radius wheels.
@@ -213,7 +214,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_pose = m_odometry.update(getHeading(), m_leftAltEncoder.getDistance(), m_rightAltEncoder.getDistance());
+
+    if(RobotBase.isReal()){
+      m_pose = m_odometry.update(getHeading(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
+    }else{
+      m_pose = m_odometry.update(getHeading(), m_leftAltEncoder.getDistance(), m_rightAltEncoder.getDistance());
+    }
     Constants.field.setRobotPose(m_pose);
   }
   public void simulationPeriodic(){
