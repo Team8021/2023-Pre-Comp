@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.HardwareConstants;
 
 public class DrivetrainSubsystem extends SubsystemBase {
 
@@ -36,8 +37,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   
   // Hardware
-  private CANSparkMax m_leftMotor = new CANSparkMax(Constants.MOTOR_LEFT_ID, MotorType.kBrushless);
-  private CANSparkMax m_rightMotor = new CANSparkMax(Constants.MOTOR_RIGHT_ID, MotorType.kBrushless);
+  private CANSparkMax m_leftMotor = new CANSparkMax(HardwareConstants.MOTOR_LEFT_ID, MotorType.kBrushless);
+  private CANSparkMax m_rightMotor = new CANSparkMax(HardwareConstants.MOTOR_RIGHT_ID, MotorType.kBrushless);
   private RelativeEncoder m_leftEncoder = m_leftMotor.getEncoder();
   private Encoder m_leftAltEncoder = new Encoder(0, 1);
   private RelativeEncoder m_rightEncoder = m_rightMotor.getEncoder();
