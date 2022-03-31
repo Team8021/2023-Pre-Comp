@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.VecBuilder;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.ADIS16448_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.ADIS16448_IMUSim;
@@ -62,6 +64,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
   
   public DrivetrainSubsystem() {
 
+
+    if(RobotState.isAutonomous()){
+      m_leftMotor.setIdleMode(IdleMode.kBrake);
+      m_rightMotor.setIdleMode(IdleMode.kBrake);
+    }else{
+      m_leftMotor.setIdleMode(IdleMode.kCoast);
+      m_rightMotor.setIdleMode(IdleMode.kCoast);
+    }
     m_leftAltEncoder.setDistancePerPulse((1./256) * kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_rightAltEncoder.setDistancePerPulse((1./256) * kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     // The conversion factor is in meters
