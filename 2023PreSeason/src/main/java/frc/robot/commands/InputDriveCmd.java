@@ -6,13 +6,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
-public class InputDrive extends CommandBase {
+public class InputDriveCmd extends CommandBase {
   
   private final DrivetrainSubsystem m_subsystem;
   private final Supplier<Double> m_speedFunction, m_turnFunction;
 
 
-  public InputDrive(DrivetrainSubsystem subsystem, Supplier<Double> speedFunction, Supplier<Double> turnFunction) {
+  public InputDriveCmd(DrivetrainSubsystem subsystem, Supplier<Double> speedFunction, Supplier<Double> turnFunction) {
     m_speedFunction = speedFunction;
     m_turnFunction = turnFunction;
     m_subsystem = subsystem;
@@ -21,7 +21,6 @@ public class InputDrive extends CommandBase {
 
   @Override
   public void initialize() {
-
     System.out.println("InputDrive Command Started!");
   }
 
@@ -32,6 +31,7 @@ public class InputDrive extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("InputDrive Command Stopped");
   }
 
   @Override

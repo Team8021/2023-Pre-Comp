@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -62,9 +63,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
   PIDController m_leftPIDController = new PIDController(.5, 0, 0);
   PIDController m_rightPIDController = new PIDController(.5, 0, 0);
   
+  SlewRateLimiter accelerationFilter = new SlewRateLimiter(Constants.SLEW_RATE_LIMITER);
+
   public DrivetrainSubsystem() {
-
-
     if(RobotState.isAutonomous()){
       m_leftMotor.setIdleMode(IdleMode.kBrake);
       m_rightMotor.setIdleMode(IdleMode.kBrake);
@@ -96,10 +97,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_rightMotor.setInverted(true);
   }
   public void setArcadeDrive(double xSpeed, double zRotation, boolean squareInputs) {
-    m_differentialDrive.arcadeDrive(xSpeed, zRotation, squareInputs);
+    m_differentialDrive.arcadeDrive(accelerationFilter.calculate(xSpeed), zRotation, squareInputs);
   }
   public void setCurvatureDrive(double xSpeed, double zRotation) {
-    m_differentialDrive.curvatureDrive(xSpeed, zRotation, true);
+    m_differentialDrive.curvatureDrive(accelerationFilter.calculate(xSpeed), zRotation, true);
   }
   public void setTankDrive(double leftSpeed, double rightSpeed) {
     m_differentialDrive.tankDrive(leftSpeed, rightSpeed);
@@ -225,7 +226,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
     if(RobotBase.isReal()){
       m_pose = m_odometry.update(getHeading(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
     }else{

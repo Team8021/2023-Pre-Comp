@@ -27,7 +27,6 @@ public class TrajectoryDriveCmd extends CommandBase {
 
   public TrajectoryDriveCmd(DrivetrainSubsystem subsystem, Trajectory trajectory, boolean resetPose) {
     m_resetPose = resetPose;
-    System.out.println("Trajectory Drive Started!");
     m_trajectory = trajectory;
     m_subsystem = subsystem;
     addRequirements(subsystem);
@@ -35,6 +34,7 @@ public class TrajectoryDriveCmd extends CommandBase {
   
   @Override
   public void initialize() {
+    System.out.println("Trajectory Drive Started!");
     m_subsystem.calibrateGyro();
     if(m_resetPose){
       m_subsystem.resetOdometry(m_trajectory.getInitialPose());
