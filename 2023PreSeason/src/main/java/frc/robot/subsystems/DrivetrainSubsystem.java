@@ -63,7 +63,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   PIDController m_leftPIDController = new PIDController(.5, 0, 0);
   PIDController m_rightPIDController = new PIDController(.5, 0, 0);
   
-  SlewRateLimiter accelerationFilter = new SlewRateLimiter(Constants.SLEW_RATE_LIMITER);
+  SlewRateLimiter forwardSlew = new SlewRateLimiter(Constants.FORWARD_SLEW_LIMIT);
+  SlewRateLimiter stopSlew = new SlewRateLimiter(Constants.STOP_SLEW_LIMIT);
 
   public DrivetrainSubsystem() {
     if(RobotState.isAutonomous()){
@@ -97,10 +98,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_rightMotor.setInverted(true);
   }
   public void setArcadeDrive(double xSpeed, double zRotation, boolean squareInputs) {
-    m_differentialDrive.arcadeDrive(accelerationFilter.calculate(xSpeed), zRotation, squareInputs);
+    double modifiedSpeed = (equals(xSpeed, 0, .1))? stopSlew.calculate(xSpeed) : forwardSlew.calculate(xSpeed); 
+    
+    m_differentialDrive.arcadeDrive(modifiedSpeed, zRotation, squareInputs);
   }
   public void setCurvatureDrive(double xSpeed, double zRotation) {
-    m_differentialDrive.curvatureDrive(accelerationFilter.calculate(xSpeed), zRotation, true);
+    m_differentialDrive.curvatureDrive(xSpeed, zRotation, true);
   }
   public void setTankDrive(double leftSpeed, double rightSpeed) {
     m_differentialDrive.tankDrive(leftSpeed, rightSpeed);
@@ -243,5 +246,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_rightEncoderSim.setDistance(m_drivetrainSim.getRightPositionMeters());
     m_rightEncoderSim.setRate(m_drivetrainSim.getRightVelocityMetersPerSecond());
     m_gyroSim.setGyroAngleZ(-m_drivetrainSim.getHeading().getDegrees());
+  }
+  private boolean equals(double a, double b, double epsilon){
+    if(a==b) return true;
+    return Math.abs(a - b) < epsilon;
   }
 }

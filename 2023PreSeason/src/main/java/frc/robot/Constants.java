@@ -24,7 +24,8 @@ public final class Constants {
         .withWidget("Number Slider")
         .withProperties(Map.of("min", 0, "max", 1))
         .getEntry();
-    public static final double SLEW_RATE_LIMITER = 5;
+    public static final double FORWARD_SLEW_LIMIT = 1.5;
+    public static final double STOP_SLEW_LIMIT = 2;
 
 
     public static final SendableChooser<SequentialCommandGroup> AutoRoutine = new SendableChooser<>();
