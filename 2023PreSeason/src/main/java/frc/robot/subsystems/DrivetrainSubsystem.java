@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -47,6 +48,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private RelativeEncoder m_rightEncoder = m_rightMotor.getEncoder();
   private Encoder m_rightAltEncoder = new Encoder(2, 3);
   private ADIS16448_IMU m_gyro = new ADIS16448_IMU();
+  private SparkMaxPIDController m_rightMotorPID = m_rightMotor.getPIDController();
+  private SparkMaxPIDController m_leftMotorPID = m_leftMotor.getPIDController();
   
   private DifferentialDrive m_differentialDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
   
@@ -74,11 +77,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
       m_leftMotor.setIdleMode(IdleMode.kCoast);
       m_rightMotor.setIdleMode(IdleMode.kCoast);
     }
-    m_leftAltEncoder.setDistancePerPulse((1./256) * kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
-    m_rightAltEncoder.setDistancePerPulse((1./256) * kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
+    m_leftAltEncoder.setDistancePerPulse(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
+    m_rightAltEncoder.setDistancePerPulse(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     // The conversion factor is in meters
     m_gyro.setYawAxis(IMUAxis.kZ);
 
+    m_leftEncoder.setVelocityConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
+    m_rightEncoder.setVelocityConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_leftEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_rightEncoder.setPositionConversionFactor(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     m_gyro.reset();
@@ -131,11 +136,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
     final double leftFeedForward = m_feedforward.calculate(speeds.leftMetersPerSecond);
     final double rightFeedForward = m_feedforward.calculate(speeds.rightMetersPerSecond);
 
-    final double leftOutput = m_leftPIDController.calculate(m_leftAltEncoder.getRate(), speeds.leftMetersPerSecond);
-    final double rightOutput = m_rightPIDController.calculate(m_rightAltEncoder.getRate(), speeds.rightMetersPerSecond);
+    final double leftPID;
+    final double rightPID;
 
-    m_leftMotor.set((leftOutput + leftFeedForward)/12);
-    m_rightMotor.set((rightOutput + rightFeedForward)/12);
+    if(RobotBase.isReal()){
+        leftPID = m_leftPIDController.calculate(m_leftEncoder.getVelocity(), speeds.leftMetersPerSecond);
+        rightPID = m_rightPIDController.calculate(m_rightEncoder.getVelocity(), speeds.rightMetersPerSecond);
+    }else{
+        leftPID = m_leftPIDController.calculate(m_leftAltEncoder.getRate(), speeds.leftMetersPerSecond);
+        rightPID = m_rightPIDController.calculate(m_rightAltEncoder.getRate(), speeds.rightMetersPerSecond);
+    }
+    m_leftMotor.set((leftPID + leftFeedForward)/12);
+    m_rightMotor.set((rightPID + rightFeedForward)/12);
   }
     /**
    * Drives the robot with the given linear velocity and angular velocity.
