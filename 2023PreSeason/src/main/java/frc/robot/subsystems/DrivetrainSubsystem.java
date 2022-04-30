@@ -77,8 +77,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
       m_leftMotor.setIdleMode(IdleMode.kCoast);
       m_rightMotor.setIdleMode(IdleMode.kCoast);
     }
-    m_leftAltEncoder.setDistancePerPulse(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
-    m_rightAltEncoder.setDistancePerPulse(kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
+    m_leftAltEncoder.setDistancePerPulse((1./256.) * kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
+    m_rightAltEncoder.setDistancePerPulse((1./256.) * kGearRatio * 2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     // The conversion factor is in meters
     m_gyro.setYawAxis(IMUAxis.kZ);
 
