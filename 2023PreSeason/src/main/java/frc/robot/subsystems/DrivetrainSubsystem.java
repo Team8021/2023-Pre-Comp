@@ -61,15 +61,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
   Pose2d m_pose = new Pose2d();
 
   // Feedforward/feedback controllers.
-  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(.1191, 2.7995, .5474);
+  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(.1191, 2., .5474);
 
   PIDController m_leftPIDController = new PIDController(.5, 0, 0);
   PIDController m_rightPIDController = new PIDController(.5, 0, 0);
   
   SlewRateLimiter forwardSlew = new SlewRateLimiter(Constants.FORWARD_SLEW_LIMIT);
-  SlewRateLimiter stopSlew = new SlewRateLimiter(Constants.STOP_SLEW_LIMIT);
 
   public DrivetrainSubsystem() {
+    invertRightMotor();
     if(RobotState.isAutonomous()){
       m_leftMotor.setIdleMode(IdleMode.kBrake);
       m_rightMotor.setIdleMode(IdleMode.kBrake);
@@ -103,9 +103,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_rightMotor.setInverted(true);
   }
   public void setArcadeDrive(double xSpeed, double zRotation, boolean squareInputs) {
-    double modifiedSpeed = (equals(xSpeed, 0, .1))? stopSlew.calculate(xSpeed) : forwardSlew.calculate(xSpeed); 
+    // double modifiedSpeed = (equals(xSpeed, 0, .1))? stopSlew.calculate(xSpeed) : forwardSlew.calculate(xSpeed); 
     
-    m_differentialDrive.arcadeDrive(modifiedSpeed, zRotation, squareInputs);
+    m_differentialDrive.arcadeDrive(xSpeed * Constants.Speed_Limit.getDouble(.5), zRotation, squareInputs);
   }
   public void setCurvatureDrive(double xSpeed, double zRotation) {
     m_differentialDrive.curvatureDrive(xSpeed, zRotation, true);
@@ -136,18 +136,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
     final double leftFeedForward = m_feedforward.calculate(speeds.leftMetersPerSecond);
     final double rightFeedForward = m_feedforward.calculate(speeds.rightMetersPerSecond);
 
-    final double leftPID;
-    final double rightPID;
+    // final double leftPID;
+    // final double rightPID;
 
-    if(RobotBase.isReal()){
-        leftPID = m_leftPIDController.calculate(m_leftEncoder.getVelocity(), speeds.leftMetersPerSecond);
-        rightPID = m_rightPIDController.calculate(m_rightEncoder.getVelocity(), speeds.rightMetersPerSecond);
-    }else{
-        leftPID = m_leftPIDController.calculate(m_leftAltEncoder.getRate(), speeds.leftMetersPerSecond);
-        rightPID = m_rightPIDController.calculate(m_rightAltEncoder.getRate(), speeds.rightMetersPerSecond);
-    }
-    m_leftMotor.set((leftPID + leftFeedForward)/12);
-    m_rightMotor.set((rightPID + rightFeedForward)/12);
+    // if(RobotBase.isReal()){
+    //     leftPID = m_leftPIDController.calculate(m_leftEncoder.getVelocity(), speeds.leftMetersPerSecond);
+    //     rightPID = m_rightPIDController.calculate(m_rightEncoder.getVelocity(), speeds.rightMetersPerSecond);
+    // }else{
+    //     leftPID = m_leftPIDController.calculate(m_leftAltEncoder.getRate(), speeds.leftMetersPerSecond);
+    //     rightPID = m_rightPIDController.calculate(m_rightAltEncoder.getRate(), speeds.rightMetersPerSecond);
+    // }
+    m_leftMotor.set((leftFeedForward)/12);
+    m_rightMotor.set((rightFeedForward)/12);
   }
     /**
    * Drives the robot with the given linear velocity and angular velocity.
