@@ -40,6 +40,12 @@ public class RobotContainer {
       new TrajectoryDriveCmd(m_drivetrainSubsystem, GenerateTrajectoryFromJSON("paths/Ball5.wpilib.json"), false)
     )
   );
+    Constants.AutoRoutine.addOption("Top Left",
+    new SequentialCommandGroup(
+      new TrajectoryDriveCmd(m_drivetrainSubsystem, GenerateTrajectoryFromJSON("paths/TopLeft1.wpilib.json"), true),
+      new TrajectoryDriveCmd(m_drivetrainSubsystem, GenerateTrajectoryFromJSON("paths/TopLeft2.wpilib.json"), false)
+    )
+  );
 
     m_drivetrainSubsystem.setDefaultCommand(new InputDriveCmd(m_drivetrainSubsystem, () -> m_driveController.getRawAxis(ControllerConstants.LEFT_Y), () -> m_driveController.getRawAxis(4)));
     configureButtonBindings();
