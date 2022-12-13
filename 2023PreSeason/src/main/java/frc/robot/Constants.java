@@ -44,6 +44,11 @@ public final class Constants {
         public static final int MOTOR_LEFT_ID = 1;
         public static final int MOTOR_RIGHT_ID = 2;
     }
+    public static final class LimeLight {
+        // Lime Light
+        public static final double MOUNT_ANGLE_DEG = 0;
+        public static final double LENS_HEIGHT_INC = 33;
+    }
     public static final class ControllerConstants
     {
         //controller ids
@@ -97,5 +102,6 @@ public final class Constants {
         public static final int POV_SW = 225;
         public static final int POV_W = 270;
         public static final int POV_NW = 315;
+
     }
 }

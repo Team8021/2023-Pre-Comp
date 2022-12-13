@@ -19,11 +19,11 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.ADIS16448_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.ADIS16448_IMUSim;
@@ -56,7 +56,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   // Kinematics determine the voltage required to move the robot and stuff like that
   private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(.5);
   // Odometry determines where on the field you are
-  private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(getHeading());
+  private DifferentialDriveOdometry m_odometry;
   // Pose is where you are on the field
   Pose2d m_pose = new Pose2d();
 
@@ -92,6 +92,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_leftAltEncoder.reset();
     m_rightAltEncoder.reset();
 
+    m_odometry = new DifferentialDriveOdometry(getHeading());
     SmartDashboard.putData("Field", Constants.field);
   }
 
@@ -106,6 +107,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // double modifiedSpeed = (equals(xSpeed, 0, .1))? stopSlew.calculate(xSpeed) : forwardSlew.calculate(xSpeed); 
     
     m_differentialDrive.arcadeDrive(xSpeed * Constants.Speed_Limit.getDouble(.5), zRotation, squareInputs);
+  }
+  public void rotate(double rotation){
+    m_differentialDrive.arcadeDrive(0, rotation * Constants.Speed_Limit.getDouble(.5), false);
   }
   public void setCurvatureDrive(double xSpeed, double zRotation) {
     m_differentialDrive.curvatureDrive(xSpeed, zRotation, true);

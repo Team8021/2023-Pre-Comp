@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.InputDriveCmd;
+import frc.robot.commands.LLFollowCmd;
 import frc.robot.commands.TrajectoryDriveCmd;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
@@ -41,7 +42,7 @@ public class RobotContainer {
     )
   );
 
-    m_drivetrainSubsystem.setDefaultCommand(new InputDriveCmd(m_drivetrainSubsystem, () -> m_driveController.getRawAxis(ControllerConstants.LEFT_Y), () -> m_driveController.getRawAxis(4)));
+    m_drivetrainSubsystem.setDefaultCommand(new InputDriveCmd(m_drivetrainSubsystem, () -> m_driveController.getRawAxis(ControllerConstants.LEFT_Y), () -> m_driveController.getRawAxis(ControllerConstants.RIGHT_X)));
     configureButtonBindings();
   }
 
@@ -50,7 +51,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Constants.AutoRoutine.getSelected();
+    return new LLFollowCmd(m_drivetrainSubsystem);
 
   }
   private Trajectory GenerateTrajectoryFromJSON(String trajectoryJSON){
